@@ -4,7 +4,7 @@ import { Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTodo } from '../../hooks/todo';
-import { Container, DeleteButton, OptionsContainer, Title } from './styles';
+import { Container, OptionsContainer, Title } from './styles';
 
 interface TodoProps {
   todo: {
@@ -41,11 +41,10 @@ const Todo: React.FC<TodoProps> = ({ todo }) => {
 
   return (
     <Swipeable
+      onSwipeableLeftOpen={() => handleRemoveTodo(todo.id)}
       renderLeftActions={() => (
         <OptionsContainer>
-          <DeleteButton onPress={() => handleRemoveTodo(todo.id)}>
-            <Icon name="trash-2" size={20} color="#F76F6D" />
-          </DeleteButton>
+          <Icon name="trash-2" size={20} color="#fff" />
         </OptionsContainer>
       )}
     >

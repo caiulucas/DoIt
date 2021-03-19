@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { FlatList } from 'react-native';
 import Todo from '../../components/Todo';
 import { useTodo } from '../../hooks/todo';
-import { Container, Input } from './styles';
+import { Container, Content, Input } from './styles';
 
 const TodoList: React.FC = () => {
   const [newTodo, setNewTodo] = useState('');
@@ -20,18 +20,20 @@ const TodoList: React.FC = () => {
 
   return (
     <Container>
-      <FlatList
-        data={todos}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <Todo todo={item} />}
-      />
+      <Content>
+        <FlatList
+          data={todos}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <Todo todo={item} />}
+        />
 
-      <Input
-        placeholder="Add new item"
-        onChangeText={handleInputChange}
-        value={newTodo}
-        onSubmitEditing={handleInputSubmit}
-      />
+        <Input
+          placeholder="Add new item"
+          onChangeText={handleInputChange}
+          value={newTodo}
+          onSubmitEditing={handleInputSubmit}
+        />
+      </Content>
     </Container>
   );
 };

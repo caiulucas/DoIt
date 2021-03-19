@@ -1,5 +1,4 @@
 import { Animated } from 'react-native';
-import { RectButton } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 
 interface TitleProps {
@@ -9,6 +8,7 @@ interface TitleProps {
 export const Container = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
+  background: ${props => props.theme.colors.background};
 `;
 
 export const Title = styled.Text<TitleProps>`
@@ -19,11 +19,8 @@ export const Title = styled.Text<TitleProps>`
 `;
 
 export const OptionsContainer = styled.View`
-  align-items: center;
+  background: #f76f6d;
   justify-content: center;
   padding: 6px;
+  flex: 1;
 `;
-
-export const DeleteButton = styled(RectButton)``;
-
-export const ButtonText = styled.Text``;
