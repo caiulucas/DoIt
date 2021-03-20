@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/Feather';
-import { useTodo } from '../../hooks/todo';
+import { useTodo } from '../../hooks/useTodo';
 import { Container, OptionsContainer, Title } from './styles';
 
 interface TodoProps {
@@ -14,7 +14,7 @@ interface TodoProps {
   };
 }
 
-const Todo: React.FC<TodoProps> = ({ todo }) => {
+export const Todo: React.FC<TodoProps> = ({ todo }) => {
   const moveAnim = useRef(new Animated.Value(-30)).current;
   const { switchDone, removeTodo } = useTodo();
 
@@ -63,5 +63,3 @@ const Todo: React.FC<TodoProps> = ({ todo }) => {
     </Swipeable>
   );
 };
-
-export default Todo;

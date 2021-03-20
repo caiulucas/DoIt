@@ -24,7 +24,7 @@ interface TodoContextData {
 
 const TodoContext = createContext<TodoContextData>({} as TodoContextData);
 
-const TodoProvider: React.FC = ({ children }) => {
+export const TodoProvider: React.FC = ({ children }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
@@ -95,5 +95,3 @@ export const useTodo = (): TodoContextData => {
 
   return context;
 };
-
-export default TodoProvider;

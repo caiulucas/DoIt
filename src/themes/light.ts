@@ -6,5 +6,6 @@ export const light = {
     background: DefaultTheme.colors.background,
     text: DefaultTheme.colors.text,
     border: DefaultTheme.colors.border,
+    placeholder: '#d4d4d4',
   },
 };

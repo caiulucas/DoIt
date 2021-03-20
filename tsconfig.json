@@ -55,7 +55,7 @@
   },
   "include": [
     "src"
-  ],
+, "node_modules/hooks"  ],
   "exclude": [
     "node_modules",
     "babel.config.js",

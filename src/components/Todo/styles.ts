@@ -14,7 +14,7 @@ export const Container = styled(Animated.View)`
 export const Title = styled.Text<TitleProps>`
   font-size: 16px;
   margin-left: 8px;
-  color: ${props => (props.done ? '#ccc' : '#f4f4f4')};
+  color: ${props => (props.done ? '#858585' : props.theme.colors.text)};
   text-decoration-line: ${props => (props.done ? 'line-through' : 'none')};
 `;
 

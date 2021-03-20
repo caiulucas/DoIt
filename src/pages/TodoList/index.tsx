@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { FlatList } from 'react-native';
-import Todo from '../../components/Todo';
-import { useTodo } from '../../hooks/todo';
+import { Todo } from '../../components/Todo';
+import { useTodo } from '../../hooks/useTodo';
 import { Container, Content, Input } from './styles';
 
-const TodoList: React.FC = () => {
+export const TodoList: React.FC = () => {
   const [newTodo, setNewTodo] = useState('');
 
   const { todos, addTodo } = useTodo();
@@ -37,4 +37,3 @@ const TodoList: React.FC = () => {
     </Container>
   );
 };
-export default TodoList;

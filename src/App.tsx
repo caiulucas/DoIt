@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import React from 'react';
+import { StatusBar, useColorScheme } from 'react-native';
 import { ThemeProvider } from 'styled-components';
-
-import { dark, light } from './themes';
 import AppProvider from './hooks';
-import TodoList from './pages/TodoList';
+import { TodoList } from './pages/TodoList';
+import { dark, light } from './themes';
 
 const App: React.FC = () => {
   const deviceTheme = useColorScheme();
-  const [theme, setTheme] = useState(light);
 
-  useEffect(() => {
-    setTheme(deviceTheme === 'light' ? light : dark);
-  }, [deviceTheme]);
+  const isLight = deviceTheme === 'light';
 
   return (
-    <ThemeProvider theme={theme}>
-      {/* <StatusBar barStyle="light-content" /> */}
+    <ThemeProvider theme={isLight ? light : dark}>
+      <StatusBar
+        barStyle={isLight ? 'light-content' : 'dark-content'}
+        backgroundColor={isLight ? '#fff' : '#000'}
+      />
       <AppProvider>
         <TodoList />
       </AppProvider>

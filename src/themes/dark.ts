@@ -6,5 +6,6 @@ export const dark: DefaultTheme = {
     background: '#000',
     text: '#fff',
     border: '#333',
+    placeholder: '#5c5c5c',
   },
 };
