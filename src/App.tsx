@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import AppProvider from './hooks';
-import { TodoList } from './pages/TodoList';
+import { Dashboard } from './pages/Dashboard';
 import { dark, light } from './themes';
 
 const App: React.FC = () => {
@@ -17,7 +17,7 @@ const App: React.FC = () => {
         backgroundColor={isLight ? '#fff' : '#000'}
       />
       <AppProvider>
-        <TodoList />
+        <Dashboard />
       </AppProvider>
     </ThemeProvider>
   );

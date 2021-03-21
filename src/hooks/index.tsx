@@ -1,8 +1,11 @@
 import React from 'react';
 import { TodoProvider } from './useTodo';
+import { TodoListProvider } from './useTodoList';
 
 const AppProvider: React.FC = ({ children }) => (
-  <TodoProvider>{children}</TodoProvider>
+  <TodoListProvider>
+    <TodoProvider>{children}</TodoProvider>
+  </TodoListProvider>
 );
 
 export default AppProvider;

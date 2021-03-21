@@ -4,7 +4,7 @@ import { Todo } from '../../components/Todo';
 import { useTodo } from '../../hooks/useTodo';
 import { Container, Content, Input } from './styles';
 
-export const TodoList: React.FC = () => {
+export const TodoPage: React.FC = () => {
   const [newTodo, setNewTodo] = useState('');
 
   const { todos, addTodo } = useTodo();
