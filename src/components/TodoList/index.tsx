@@ -1,4 +1,6 @@
-import React from 'react';
+import { useNavigation } from '@react-navigation/core';
+import React, { useCallback } from 'react';
+import { TodoList as ITodoList } from '../../hooks/useTodoList';
 
 import {
   Container,
@@ -12,20 +14,31 @@ import {
   TodosInfo,
 } from './styles';
 
-export const TodoList: React.FC = () => (
-  <Container>
-    <Title>Lista de Trabalho</Title>
+interface TodoListProps {
+  todoList: ITodoList;
+}
 
-    <TodosInfo>
-      <QuantityContainer>
-        <Quantity>5</Quantity>
-        <QuantityText>items</QuantityText>
-      </QuantityContainer>
+export const TodoList: React.FC<TodoListProps> = ({ todoList }) => {
+  const { navigate } = useNavigation();
+  const handlePressContainer = useCallback(() => {
+    navigate('TodoPage', { todoListId: todoList.id });
+  }, [navigate, todoList.id]);
 
-      <Progress>
-        <Percentage>20%</Percentage>
-        <ProgressText>concluídos</ProgressText>
-      </Progress>
-    </TodosInfo>
-  </Container>
-);
+  return (
+    <Container onPress={handlePressContainer}>
+      <Title>{todoList.title}</Title>
+
+      <TodosInfo>
+        <QuantityContainer>
+          <Quantity>{todoList.todos.length}</Quantity>
+          <QuantityText>items</QuantityText>
+        </QuantityContainer>
+
+        <Progress>
+          <Percentage>20%</Percentage>
+          <ProgressText>concluídos</ProgressText>
+        </Progress>
+      </TodosInfo>
+    </Container>
+  );
+};

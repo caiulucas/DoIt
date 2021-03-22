@@ -1,38 +1,106 @@
-import React, { useCallback, useState } from 'react';
+import { useRoute } from '@react-navigation/core';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
 import { Todo } from '../../components/Todo';
-import { useTodo } from '../../hooks/useTodo';
-import { Container, Content, Input } from './styles';
+import { TodoList, useTodoList } from '../../hooks/useTodoList';
+import { Container, Content, Input, TitleInput } from './styles';
+
+interface RouteParams {
+  todoListId: string;
+}
 
 export const TodoPage: React.FC = () => {
-  const [newTodo, setNewTodo] = useState('');
+  const [todo, setTodo] = useState('');
+  const [title, setTitle] = useState('');
+  const [todoList, setTodoList] = useState<TodoList>({} as TodoList);
+  const [hasTitle, setHasTitle] = useState(false);
 
-  const { todos, addTodo } = useTodo();
+  const { params } = useRoute();
+  const routeParams = params as RouteParams;
 
-  const handleInputChange = useCallback((value: string) => {
-    setNewTodo(value);
+  const {
+    getTodoListById,
+    addTodoList,
+    addTodo,
+    removeTodo,
+    switchDone,
+  } = useTodoList();
+
+  useEffect(() => {
+    if (!!routeParams && routeParams.todoListId) {
+      const list = getTodoListById(routeParams.todoListId);
+      setTodoList(list);
+      setTitle(list.title);
+      setHasTitle(true);
+    }
+  }, [getTodoListById, routeParams]);
+
+  const handleTitleInputChange = useCallback((value: string) => {
+    setTitle(value);
   }, []);
 
-  const handleInputSubmit = useCallback(() => {
-    addTodo(newTodo);
-    setNewTodo('');
-  }, [newTodo, addTodo]);
+  const handleTitleInputSubmit = useCallback(async () => {
+    const list = await addTodoList(title);
+    setTodoList(list);
+    setHasTitle(true);
+  }, [addTodoList, title]);
+
+  const handleInputChange = useCallback((value: string) => {
+    setTodo(value);
+  }, []);
+
+  const handleInputSubmit = useCallback(async () => {
+    const list = await addTodo(todoList.id, todo);
+    setTodoList(list);
+    setTodo('');
+  }, [addTodo, todo, todoList]);
+
+  const handleRemoveTodo = useCallback(
+    async (todoId: string) => {
+      await removeTodo(todoList.id, todoId);
+    },
+    [removeTodo, todoList.id],
+  );
+
+  const handleSwitchDone = useCallback(
+    async (todoId: string) => {
+      await switchDone(todoList.id, todoId);
+    },
+    [switchDone, todoList.id],
+  );
 
   return (
     <Container>
       <Content>
-        <FlatList
-          data={todos}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => <Todo todo={item} />}
+        <TitleInput
+          placeholder="Título da lista"
+          onChangeText={handleTitleInputChange}
+          value={title}
+          onSubmitEditing={handleTitleInputSubmit}
         />
 
-        <Input
-          placeholder="Add new item"
-          onChangeText={handleInputChange}
-          value={newTodo}
-          onSubmitEditing={handleInputSubmit}
-        />
+        {hasTitle && (
+          <>
+            <FlatList
+              data={todoList.todos}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <Todo
+                  todo={item}
+                  onRemove={handleRemoveTodo}
+                  onSwitch={handleSwitchDone}
+                />
+              )}
+            />
+
+            <Input
+              placeholder="Add new item"
+              onChangeText={handleInputChange}
+              value={todo}
+              onSubmitEditing={handleInputSubmit}
+            />
+          </>
+        )}
       </Content>
     </Container>
   );

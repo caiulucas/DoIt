@@ -3,20 +3,17 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/Feather';
-import { useTodo } from '../../hooks/useTodo';
+import { Todo as ITodo } from '../../hooks/useTodoList';
 import { Container, OptionsContainer, Title } from './styles';
 
 interface TodoProps {
-  todo: {
-    id: string;
-    title: string;
-    done: boolean;
-  };
+  onRemove: (todoId: string) => Promise<void>;
+  onSwitch: (todoId: string) => Promise<void>;
+  todo: ITodo;
 }
 
-export const Todo: React.FC<TodoProps> = ({ todo }) => {
-  const moveAnim = useRef(new Animated.Value(-30)).current;
-  const { switchDone, removeTodo } = useTodo();
+export const Todo: React.FC<TodoProps> = ({ todo, onRemove, onSwitch }) => {
+  const moveAnim = useRef(new Animated.Value(-35)).current;
 
   useEffect(() => {
     Animated.timing(moveAnim, {
@@ -26,17 +23,21 @@ export const Todo: React.FC<TodoProps> = ({ todo }) => {
     }).start();
   }, [moveAnim]);
 
+  const handleSwitchDone = useCallback(async () => {
+    await onSwitch(todo.id);
+  }, [onSwitch, todo.id]);
+
   const handleRemoveTodo = useCallback(
     (id: string) => {
       Animated.timing(moveAnim, {
-        toValue: -30,
+        toValue: -35,
         duration: 300,
         useNativeDriver: false,
       }).start();
 
-      setTimeout(() => removeTodo(id), 300);
+      setTimeout(() => onRemove(id), 300);
     },
-    [removeTodo, moveAnim],
+    [moveAnim, onRemove],
   );
 
   return (
@@ -54,7 +55,7 @@ export const Todo: React.FC<TodoProps> = ({ todo }) => {
         }}
       >
         <CheckBox
-          onValueChange={() => switchDone(todo.id)}
+          onValueChange={() => handleSwitchDone()}
           tintColors={{ true: '#8a80f2', false: '#575199' }}
           value={todo.done}
         />

@@ -16,3 +16,10 @@ export const Input = styled.TextInput.attrs(({ theme }) => ({
   border-bottom-color: ${({ theme }) => theme.colors.border};
   color: ${({ theme }) => theme.colors.text};
 `;
+
+export const TitleInput = styled.TextInput.attrs(({ theme }) => ({
+  placeholderTextColor: theme.colors.placeholder,
+}))`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 24px;
+`;

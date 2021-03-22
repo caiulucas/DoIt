@@ -8,9 +8,14 @@ import React, {
   useState,
 } from 'react';
 import { v4 as uuid } from 'uuid';
-import { Todo } from './useTodo';
 
-interface TodoList {
+export interface Todo {
+  id: string;
+  title: string;
+  done: boolean;
+}
+
+export interface TodoList {
   id: string;
   title: string;
   todos: Todo[];
@@ -18,7 +23,11 @@ interface TodoList {
 
 interface TodoListContextData {
   todoLists: TodoList[];
-  addTodoList: (todoListTitle: string) => Promise<void>;
+  getTodoListById: (todoListId: string) => TodoList;
+  addTodoList: (todoListTitle: string) => Promise<TodoList>;
+  addTodo: (todoListId: string, todoTitle: string) => Promise<TodoList>;
+  removeTodo: (todoListId: string, todoId: string) => Promise<void>;
+  switchDone: (todoListId: string, todoId: string) => Promise<void>;
 }
 
 const TodoListContext = createContext<TodoListContextData>(
@@ -38,6 +47,17 @@ export const TodoListProvider: React.FC = ({ children }) => {
     loadTodoLists();
   }, []);
 
+  const getTodoListById = useCallback(
+    (todoListId: string) => {
+      const todoList = todoLists.find(({ id }) => todoListId === id);
+
+      if (!todoList) throw new Error('Todo List not found');
+
+      return todoList;
+    },
+    [todoLists],
+  );
+
   const addTodoList = useCallback(
     async (todoListTitle: string) => {
       const newTodoList: TodoList = {
@@ -53,14 +73,99 @@ export const TodoListProvider: React.FC = ({ children }) => {
         '@DoIt:todoLists',
         JSON.stringify(newTodoLists),
       );
+
+      return newTodoList;
     },
     [todoLists],
   );
 
-  const value = useMemo(() => ({ todoLists, addTodoList }), [
-    todoLists,
-    addTodoList,
-  ]);
+  const addTodo = useCallback(
+    async (todoListId: string, todoTitle: string) => {
+      const todoList = getTodoListById(todoListId);
+
+      const todo: Todo = {
+        id: uuid(),
+        title: todoTitle,
+        done: false,
+      };
+      const updatedTodoList = { ...todoList, todos: [...todoList.todos, todo] };
+
+      const updatedTodoLists = todoLists.map(list => {
+        if (list.id === todoListId) return updatedTodoList;
+
+        return list;
+      });
+
+      setTodoLists(updatedTodoLists);
+
+      await AsyncStorage.setItem(
+        '@DoIt:todoLists',
+        JSON.stringify(updatedTodoLists),
+      );
+
+      return updatedTodoList;
+    },
+    [getTodoListById, todoLists],
+  );
+
+  const removeTodo = useCallback(
+    async (todoListId: string, todoId: string) => {
+      const todoList = getTodoListById(todoListId);
+
+      const filteredTodos = todoList.todos.filter(todo => todo.id !== todoId);
+
+      const updatedTodoLists = todoLists.map(list => {
+        if (list.id === todoListId) return { ...list, todos: filteredTodos };
+
+        return list;
+      });
+
+      setTodoLists(updatedTodoLists);
+
+      await AsyncStorage.setItem(
+        '@DoIt:todoLists',
+        JSON.stringify(updatedTodoLists),
+      );
+    },
+    [getTodoListById, todoLists],
+  );
+
+  const switchDone = useCallback(
+    async (todoListId: string, todoId: string) => {
+      const todoList = getTodoListById(todoListId);
+
+      const updatedTodos = todoList.todos.map(todo => {
+        if (todo.id === todoId) return { ...todo, done: !todo.done };
+        return todo;
+      });
+
+      const updatedTodoLists = todoLists.map(list => {
+        if (list.id === todoListId) {
+          return { ...list, todos: updatedTodos };
+        }
+        return list;
+      });
+
+      setTodoLists(updatedTodoLists);
+      await AsyncStorage.setItem(
+        '@DoIt:todoLists',
+        JSON.stringify(updatedTodoLists),
+      );
+    },
+    [getTodoListById, todoLists],
+  );
+
+  const value = useMemo(
+    () => ({
+      todoLists,
+      getTodoListById,
+      addTodoList,
+      addTodo,
+      removeTodo,
+      switchDone,
+    }),
+    [todoLists, getTodoListById, addTodoList, addTodo, removeTodo, switchDone],
+  );
 
   return (
     <TodoListContext.Provider value={value}>
@@ -72,7 +177,7 @@ export const TodoListProvider: React.FC = ({ children }) => {
 export const useTodoList = (): TodoListContextData => {
   const context = useContext(TodoListContext);
 
-  if (context)
+  if (!context)
     throw new Error('useTodoList must be used within a TodoProvider');
 
   return context;

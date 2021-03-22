@@ -1,8 +1,9 @@
+import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import AppProvider from './hooks';
-import { Dashboard } from './pages/Dashboard';
+import { AppRoutes } from './routes/app.routes';
 import { dark, light } from './themes';
 
 const App: React.FC = () => {
@@ -12,13 +13,15 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={isLight ? light : dark}>
-      <StatusBar
-        barStyle={isLight ? 'light-content' : 'dark-content'}
-        backgroundColor={isLight ? '#fff' : '#000'}
-      />
-      <AppProvider>
-        <Dashboard />
-      </AppProvider>
+      <NavigationContainer>
+        <StatusBar
+          barStyle={isLight ? 'light-content' : 'dark-content'}
+          backgroundColor={isLight ? '#fff' : '#000'}
+        />
+        <AppProvider>
+          <AppRoutes />
+        </AppProvider>
+      </NavigationContainer>
     </ThemeProvider>
   );
 };
